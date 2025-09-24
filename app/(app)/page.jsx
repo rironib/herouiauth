@@ -1,7 +1,7 @@
-import { button as buttonStyles } from "@heroui/theme";
-import { RiGithubLine } from "react-icons/ri";
 import { siteConfig } from "@/config/site";
+import { button as buttonStyles } from "@heroui/theme";
 import Link from "next/link";
+import { RiGithubLine } from "react-icons/ri";
 
 export const generateMetadata = async () => {
   const { home: metadata } = siteConfig;
@@ -59,7 +59,6 @@ export default function Home() {
 
       <div className="flex gap-3">
         <Link
-          isExternal
           className={buttonStyles({
             color: "primary",
             radius: "full",
@@ -70,7 +69,6 @@ export default function Home() {
           Documentation
         </Link>
         <Link
-          isExternal
           className={buttonStyles({ variant: "bordered", radius: "full" })}
           href="https://github.com/rironib/herouiauth"
         >

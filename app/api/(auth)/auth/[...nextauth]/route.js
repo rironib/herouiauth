@@ -1,17 +1,13 @@
+// app/api/auth/[...nextauth]/route.js
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise, { getDb } from "@/lib/mongodb";
 import { compare } from "bcrypt";
-import { ObjectId } from "mongodb";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
-import { NextResponse } from "next/server";
-
-const dbName = process.env.DB_NAME;
+import connectDB from "@/lib/mongooseDB";
+import User from "@/models/User";
 
 const authOptions = {
-  adapter: MongoDBAdapter(clientPromise, { databaseName: dbName }),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
@@ -22,10 +18,12 @@ const authOptions = {
         captchaToken: { label: "Captcha Token", type: "text" },
       },
       async authorize(credentials) {
-        // ✅ Validate captcha using our helper
+        await connectDB();
+
+        // ✅ Validate captcha
         const captcha = await verifyTurnstile(credentials.captchaToken);
         if (!captcha.success) {
-          return NextResponse.json({ error: captcha.error }, { status: 403 });
+          throw new Error(captcha.error || "Captcha verification failed.");
         }
 
         if (!credentials?.email || !credentials?.password) {
@@ -34,8 +32,7 @@ const authOptions = {
 
         // Find user by email or username
         const input = credentials.email.trim().toLowerCase();
-        const db = await getDb();
-        const user = await db.collection("users").findOne({
+        const user = await User.findOne({
           $or: [{ email: input }, { username: input }],
         });
 
@@ -43,13 +40,11 @@ const authOptions = {
           throw new Error("Invalid email/username or password.");
         }
 
-        // Compare password
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
           throw new Error("Invalid email/username or password.");
         }
 
-        // Require verified email
         if (!user.emailVerified) {
           throw new Error(
             "Please verify your email address before logging in.",
@@ -62,49 +57,46 @@ const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      profile(profile) {
+      async profile(profile) {
+        await connectDB();
+
+        let user = await User.findOne({ email: profile.email });
+        if (!user) {
+          user = await User.create({
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+            isAdmin: false,
+            emailVerified: new Date(),
+          });
+        }
+
         return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          isAdmin: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          isAdmin: user.isAdmin,
         };
       },
     }),
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    // Runs on initial sign-in + every token refresh
     async jwt({ token, user }) {
-      const db = await getDb();
-
-      // On first login, merge DB user data into token
+      await connectDB();
       if (user) {
-        let dbUser = null;
-
-        // Try to fetch by ObjectId if valid
-        if (user.id && ObjectId.isValid(user.id)) {
-          dbUser = await db
-            .collection("users")
-            .findOne({ _id: new ObjectId(user.id) });
-        }
-
-        // Store data in token
+        const dbUser = await User.findById(user.id);
         token.id = dbUser._id.toString();
         token.email = dbUser.email;
-        token.isAdmin = dbUser.isAdmin || false;
-        token.name = dbUser.name || "";
+        token.isAdmin = dbUser.isAdmin;
+        token.name = dbUser.name;
         token.username = dbUser.username || "";
         token.image = dbUser.image || "";
-        token.emailVerified = dbUser.emailVerified || false;
+        token.emailVerified = dbUser.emailVerified ? true : false;
       }
       return token;
     },
-
-    // Sends token data to the client session
     async session({ session, token }) {
       session.user = {
         id: token.id,

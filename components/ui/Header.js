@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import { ThemeSwitch } from "@/components/theme-switch";
+import { atomic_age } from "@/config/fonts";
+import { siteConfig } from "@/config/site";
 import {
   Avatar,
   Button,
@@ -19,9 +21,7 @@ import {
   Skeleton,
 } from "@heroui/react";
 import { signOut, useSession } from "next-auth/react";
-import Loading from "@/components/Loading";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { siteConfig } from "@/config/site";
+import React from "react";
 
 export const AcmeLogo = () => {
   return (
@@ -57,7 +57,9 @@ export default function Header() {
         <NavbarBrand>
           <Link color="foreground" href="/">
             <AcmeLogo />
-            <p className="hidden text-xl font-bold sm:block">
+            <p
+              className={`${atomic_age.className} hidden text-xl font-bold sm:block`}
+            >
               {siteConfig.siteName}
             </p>
           </Link>
