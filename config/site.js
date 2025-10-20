@@ -13,6 +13,7 @@ export const siteConfig = {
     "nextauth, shadcnui, react, next, react-hook-form, react-icons, tailwindcss",
   baseUrl: homeURL,
   author: "rironib",
+  locale: "en_US",
   robots: "index, follow",
   icon: homeURL + "/favicon.ico",
   fallback: homeURL + "/images/error.png",

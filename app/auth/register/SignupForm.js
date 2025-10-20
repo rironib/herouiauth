@@ -127,7 +127,6 @@ export default function SignupForm() {
             isLoading={loading}
             radius="sm"
             color="primary"
-            variant="flat"
             size="lg"
             type="submit"
             className="w-full"

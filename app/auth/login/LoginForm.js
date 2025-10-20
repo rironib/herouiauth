@@ -109,7 +109,6 @@ export default function LoginForm() {
         </div>
         <div>
           <Button
-            variant="flat"
             size="lg"
             radius="sm"
             className="mt-4 w-full"
@@ -179,7 +178,6 @@ export default function LoginForm() {
             isLoading={loading}
             radius="sm"
             color="primary"
-            variant="flat"
             size="lg"
             type="submit"
             className="w-full"

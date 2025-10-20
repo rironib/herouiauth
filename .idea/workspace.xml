@@ -5,12 +5,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72788adf-805a-4fbb-9073-64f3f58a3587" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/(app)/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(app)/(page)/about/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/(page)/about/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(app)/(page)/contact/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/(page)/contact/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(app)/(page)/privacy/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/(page)/privacy/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(app)/(page)/terms/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/(page)/terms/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(app)/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(app)/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/page.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/(auth)/auth/[...nextauth]/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/(auth)/auth/[...nextauth]/route.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/analytics/route.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/visitor/route.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/forgot/ForgotForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/forgot/ForgotForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/forgot/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/forgot/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/login/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/login/LoginForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/login/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/login/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/register/SignupForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/register/SignupForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/register/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/register/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/reset/ResetClient.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/reset/ResetClient.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/reset/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/reset/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/verify/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/verify/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dashboard/chart.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/dashboard/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/dashboard/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/providers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/providers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Analytics.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Analytics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/Footer.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Footer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/ui/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/mongodb.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mongodb.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/site.js" beforeDir="false" afterPath="$PROJECT_DIR$/config/site.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/generateVisitorId.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/mongooseDB.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/db.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/middleware.js" beforeDir="false" afterPath="$PROJECT_DIR$/middleware.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/User.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/User.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Visitor.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,19 +69,20 @@
     "ignore.virus.scanning.warn.message": "true",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "D:/HeroUI/herouiauth/app",
+    "last_opened_file_path": "D:/HeroUI/herouiauth/components/ui",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
     "prettierjs.PrettierConfiguration.Package": "D:\\HeroUI\\herouiauth\\node_modules\\prettier",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.vagrant",
     "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\HeroUI\herouiauth\components\ui" />
       <recent name="D:\HeroUI\herouiauth\app" />
       <recent name="D:\HeroUI\herouiauth\app\(app)" />
     </key>
@@ -78,7 +105,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-WS-252.26199.162" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.26830.93" />
       </set>
     </attachedChunks>
   </component>
@@ -91,7 +118,12 @@
       <updated>1756134639557</updated>
       <workItem from="1756134641615" duration="4774000" />
       <workItem from="1756143088830" duration="1494000" />
-      <workItem from="1758741120417" duration="4986000" />
+      <workItem from="1758741120417" duration="5765000" />
+      <workItem from="1758820470408" duration="817000" />
+      <workItem from="1758859323680" duration="5436000" />
+      <workItem from="1758908848191" duration="713000" />
+      <workItem from="1758945481747" duration="926000" />
+      <workItem from="1760961271300" duration="6714000" />
     </task>
     <servers />
   </component>

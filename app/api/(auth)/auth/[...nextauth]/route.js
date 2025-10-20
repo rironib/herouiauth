@@ -1,11 +1,12 @@
 // app/api/auth/[...nextauth]/route.js
+
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcrypt";
-import { verifyTurnstile } from "@/lib/verifyTurnstile";
-import connectDB from "@/lib/mongooseDB";
 import User from "@/models/User";
+import connectDB from "@/lib/db";
+import GoogleProvider from "next-auth/providers/google";
+import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,

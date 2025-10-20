@@ -1,4 +1,5 @@
 // models/User.js
+
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
@@ -13,7 +14,12 @@ const UserSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
 
+    // Timestamps
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+
     // Email verification
+    verifyToken: { type: String },
     emailVerified: { type: Date, default: null },
 
     // Password reset
