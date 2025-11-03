@@ -1,49 +1,49 @@
-// FILE: src/app/api/verify/route.js
+// app/api/verify/route.js
 
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
+import { verifyTurnstile } from "@/lib/verifyTurnstile";
 
 export async function POST(req) {
-  const { token } = await req.json();
+  const { token, captchaToken } = await req.json();
 
   if (!token) {
-    return NextResponse.json(
-      { error: "Verification token is required." },
-      { status: 400 },
-    );
+    return NextResponse.json({
+      success: false,
+      error: "Verification token is required.",
+    });
+  }
+
+  // ✅ Validate captcha using our helper
+  const captcha = await verifyTurnstile(captchaToken);
+  if (!captcha.success) {
+    return NextResponse.json({ success: false, error: captcha.error });
   }
 
   try {
-    const db = await getDb();
-    const user = await db.collection("users").findOne({ verifyToken: token });
+    await connectDB();
+    const user = await User.findOne({ verifyToken: token });
 
     if (!user) {
-      return NextResponse.json(
-        {
-          error:
-            "The provided verification token is invalid or has been expired.",
-        },
-        { status: 400 },
-      );
+      return NextResponse.json({
+        success: false,
+        error: "Invalid verification token.",
+      });
     }
 
     if (user?.emailVerified) {
-      return NextResponse.json(
-        { error: "Email is already verified." },
-        { status: 200 },
-      );
+      return NextResponse.json({
+        success: false,
+        error: "Email already verified.",
+      });
     }
-
-    await db.collection("users").updateOne(
-      { _id: user._id },
-      {
-        $set: { emailVerified: new Date() },
-        $unset: { verifyToken: "" },
-      },
+    await User.updateOne(
+      { verifyToken: token },
+      { $set: { emailVerified: new Date() } },
     );
-
     return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json({ success: false, error: err.message });
   }
 }

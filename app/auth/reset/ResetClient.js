@@ -38,7 +38,7 @@ export default function ResetClient() {
         toast.success("Your password has been reset successfully.");
       }
     } catch {
-      toast.error("Network error. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

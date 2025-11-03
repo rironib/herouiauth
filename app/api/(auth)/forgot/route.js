@@ -1,10 +1,11 @@
-// src/app/api/forgot/route.js
+// app/api/forgot/route.js
 
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
 import { sendPasswordResetEmail } from "@/lib/mailer";
 import crypto from "node:crypto";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
 
 const EMAIL_REGEX = new RegExp(/^[A-Za-z0-9._]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/);
 const RESET_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -38,12 +39,10 @@ export async function POST(req) {
         );
     }
 
-    const db = await getDb();
-    const users = db.collection("users");
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Check if a User exists with the provided email
-    const user = await users.findOne({ email: normalizedEmail });
+    await connectDB();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
       return NextResponse.json(
@@ -85,7 +84,7 @@ export async function POST(req) {
     await sendPasswordResetEmail(normalizedEmail, resetToken);
 
     // Update user with new token and timestamp
-    await users.updateOne(
+    await User.updateOne(
       { _id: user._id },
       { $set: { resetToken, resetTokenExpiry, resetLastSent: now } },
     );

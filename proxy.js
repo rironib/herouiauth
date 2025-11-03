@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const AUTH_ROUTES = ["/dashboard"];
 const ADMIN_ROUTES = ["/admin"];
 
-export async function middleware(req) {
+export async function proxy(req) {
   const { pathname } = req.nextUrl;
   const res = NextResponse.next();
 
@@ -23,11 +23,11 @@ export async function middleware(req) {
 
   // Admin-only routes
   if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
-    if (!token?.isAdmin) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
     if (!token) {
       return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
+    if (!token.isAdmin) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return res;
   }

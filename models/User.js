@@ -8,7 +8,6 @@ const UserSchema = new mongoose.Schema(
     username: { type: String, unique: true, sparse: true, lowercase: true },
     email: { type: String, unique: true, required: true, lowercase: true },
     password: { type: String },
-    image: { type: String },
 
     // Roles & permissions
     isAdmin: { type: Boolean, default: false },
@@ -27,7 +26,7 @@ const UserSchema = new mongoose.Schema(
     resetTokenExpiry: { type: Date },
     resetLastSent: { type: Date },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 // Avoid OverwriteModelError on hot reload

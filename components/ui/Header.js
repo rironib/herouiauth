@@ -3,20 +3,18 @@
 import { useState } from "react";
 import { siteConfig } from "@/config/site";
 import { atomic_age } from "@/config/fonts";
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Link,
-  Skeleton,
-} from "@heroui/react";
+import { Button, Link, Skeleton } from "@heroui/react";
 import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { RiCloseLine, RiMenuLine } from "react-icons/ri";
+import {
+  RiAccountCircleLine,
+  RiCloseLine,
+  RiHome2Line,
+  RiMenuLine,
+  RiShieldUserLine,
+} from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
+import Gravatar from "react-gravatar";
 
 export const AcmeLogo = () => (
   <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -31,6 +29,7 @@ export const AcmeLogo = () => (
 
 const Header = () => {
   const pathname = usePathname();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { data: session, status } = useSession();
 
@@ -96,40 +95,11 @@ const Header = () => {
             {status === "loading" ? (
               <Skeleton className="flex h-8 w-8 rounded-full" />
             ) : session?.user || session?.user?.email ? (
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform"
-                    color="secondary"
-                    name={session?.user?.name}
-                    size="sm"
-                    src={session?.user?.image || "/avatars/user.png"}
-                  />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat">
-                  <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">Signed in as</p>
-                    <p className="font-semibold">{session.user.email}</p>
-                  </DropdownItem>
-                  {session.user.isAdmin && (
-                    <DropdownItem href="/admin" key="admin" color="primary">
-                      Admin Panel
-                    </DropdownItem>
-                  )}
-                  <DropdownItem href="/dashboard" key="dashboard">
-                    Dashboard
-                  </DropdownItem>
-                  <DropdownItem
-                    onPress={handleLogout}
-                    key="logout"
-                    color="danger"
-                  >
-                    Log Out
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+              <Gravatar
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="border-secondary-400 w-8 cursor-pointer rounded-full border-2 bg-black p-0.5 sm:w-10"
+                email={session?.user?.email}
+              />
             ) : (
               <div className="hidden items-center gap-3 lg:flex">
                 <Button
@@ -210,6 +180,74 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* User Menu */}
+      {session?.user && (
+        <>
+          {/* Backdrop */}
+          <div
+            className={`fixed inset-0 z-20 bg-black/50 transition-opacity duration-300 ${isUserMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}
+            onClick={() => setIsUserMenuOpen(false)}
+          />
+          <div
+            className={`bg-default-100 fixed top-0 right-0 z-30 h-max min-w-[180px] transform transition-transform duration-300 ease-in-out ${isUserMenuOpen ? "translate-y-0 shadow" : "-translate-y-full"}`}
+          >
+            <div className="flex h-max flex-col justify-between px-4 pt-16 pb-4 md:pt-18">
+              {/* Navigation Links */}
+              <div className="mb-4">
+                <div className="flex items-center gap-2">
+                  <Gravatar
+                    className="border-secondary-400 w-8 cursor-pointer rounded-full border-2 bg-black p-0.5 sm:w-10"
+                    email={session?.user?.email}
+                  />
+                  <div className="flex flex-col">
+                    <p className="text-sm font-medium">{session?.user?.name}</p>
+                    <p className="text-muted-foreground text-xs">{session?.user?.username}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-4 space-y-2">
+                <Link
+                  href="/"
+                  color={pathname === "/" ? "primary" : "foreground"}
+                  className="hover:text-primary flex items-center gap-2 font-medium"
+                  onClick={() => setIsUserMenuOpen(false)}
+                >
+                  <RiHome2Line /> Home
+                </Link>
+                {session?.user?.isAdmin && (
+                  <Link
+                    href="/admin"
+                    color={pathname === "/admin" ? "primary" : "foreground"}
+                    className="hover:text-primary flex items-center gap-2 font-medium"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <RiShieldUserLine /> Admin Panel
+                  </Link>
+                )}
+                <Link
+                  href="/dashboard"
+                  color={pathname === "/dashboard" ? "primary" : "foreground"}
+                  className="hover:text-primary flex items-center gap-2 font-medium transition-colors"
+                  onClick={() => setIsUserMenuOpen(false)}
+                >
+                  <RiAccountCircleLine /> Dashboard
+                </Link>
+              </div>
+
+              <Button
+                fullWidth
+                color="danger"
+                variant="ghost"
+                radius="sm"
+                onClick={handleLogout}
+              >
+                Log Out
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

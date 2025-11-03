@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button, Input, Textarea } from "@heroui/react";
-import { axiosPublic } from "@/lib/useAxiosPublic";
+import { useState } from "react";
 import { toast } from "@/lib/toast";
 import Turnstile from "react-turnstile";
+import { useForm } from "react-hook-form";
+import { axiosPublic } from "@/lib/useAxiosPublic";
+import { Button, Input, Textarea } from "@heroui/react";
 
 export default function ContactForm() {
   const [token, setToken] = useState("");
+  const [key, setKey] = useState(0);
+
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
@@ -23,23 +24,27 @@ export default function ContactForm() {
     },
   });
 
+  const resetCaptcha = () => {
+    setToken("");
+    setKey((k) => k + 1);
+  };
+
   const onSubmit = async (data) => {
-    if (!token) {
-      toast.error("Please verify you’re not a robot");
-      return;
-    }
+    if (!token) return toast.error("Please verify you’re not a robot");
 
     try {
       const res = await axiosPublic.post("/api/contact", { ...data, token });
       if (!res.data.success) {
         toast.error(res.data.message || "Failed to send message");
+        resetCaptcha();
         return;
       }
       toast.success(res.data.message || "Message sent successfully!");
       reset();
-      setToken("");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong");
+      resetCaptcha();
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Something went wrong");
+      resetCaptcha();
     }
   };
 
@@ -94,10 +99,11 @@ export default function ContactForm() {
 
         {/* 🛡️ Turnstile Captcha */}
         <Turnstile
+          key={key}
           sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
           onSuccess={setToken}
-          onError={() => setToken("")}
-          onExpire={() => setToken("")}
+          onExpire={resetCaptcha}
+          onError={resetCaptcha}
           size="flexible"
           theme="auto"
           appearance="always"
@@ -117,7 +123,10 @@ export default function ContactForm() {
             type="button"
             variant="bordered"
             disabled={isSubmitting}
-            onPress={() => reset()}
+            onPress={() => {
+              reset();
+              resetCaptcha();
+            }}
           >
             Reset
           </Button>

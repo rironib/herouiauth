@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import VerifyClient from "./VerifyClient";
 import Loading from "@/components/Loading";
 import { siteConfig } from "@/config/site";
 import { generatePageMetadata } from "@/lib/generateMeta";
+import VerifyForm from "@/app/auth/verify/VerifyForm";
 
 export const generateMetadata = async () => {
   const { verify: metadata } = siteConfig;
@@ -20,7 +20,7 @@ export const generateMetadata = async () => {
 export default function VerifyPage() {
   return (
     <Suspense fallback={<Loading />}>
-      <VerifyClient />
+      <VerifyForm />
     </Suspense>
   );
 }

@@ -1,8 +1,9 @@
-// FILE: src/app/api/reset/route.js
+// app/api/reset/route.js
 
-import { NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
 import { hash } from "bcrypt";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
+import { NextResponse } from "next/server";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 
 // Password strength checker
@@ -41,8 +42,8 @@ export async function POST(req) {
         );
     }
 
-    const db = await getDb();
-    const user = await db.collection("users").findOne({ resetToken: token });
+    await connectDB();
+    const user = await User.findOne({ resetToken: token });
     switch (true) {
       case !user:
         return NextResponse.json(
@@ -64,7 +65,7 @@ export async function POST(req) {
     const hashedPassword = await hash(newPassword, 10);
 
     // Update user with new password and reset token
-    await db.collection("users").updateOne(
+    await User.updateOne(
       { _id: user._id },
       {
         $set: { password: hashedPassword },

@@ -13,7 +13,7 @@ export async function POST(req) {
     const body = await req.json();
     const { name, email, message, token } = body;
     if (!name || !email || !message || !token)
-      return Response.json(
+      return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 },
       );
@@ -26,21 +26,24 @@ export async function POST(req) {
         response: token,
       }),
     );
-    if (!turnstileRes.data.success) {
-      return Response.json(
+    if (!turnstileRes.data?.success) {
+      return NextResponse.json(
         { success: false, message: "Captcha verification failed" },
         { status: 400 },
       );
     }
 
     await connectDB();
-    const contact = new Contact(body);
+    const contact = new Contact({ name, email, message });
     await contact.save();
     return NextResponse.json({
       success: true,
       message: "Contact submitted successfully",
     });
   } catch (err) {
-    return NextResponse.json({ success: false, message: err.message });
+    return NextResponse.json(
+      { success: false, message: err.message || String(err) },
+      { status: 500 },
+    );
   }
 }

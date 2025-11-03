@@ -1,11 +1,12 @@
 // app/api/register/route.js
 
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
 import { sendVerificationEmail } from "@/lib/mailer";
 import { hash } from "bcrypt";
 import crypto from "node:crypto";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
 
 const EMAIL_REGEX = new RegExp(/^[A-Za-z0-9._]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/);
 
@@ -94,25 +95,47 @@ export async function POST(req) {
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedUsername = username.trim().toLowerCase();
 
-    const db = await getDb();
-    const user = await db.collection("users").findOne({
+    // new code
+
+    await connectDB();
+    const user = await User.findOne({
       $or: [{ email: normalizedEmail }, { username: normalizedUsername }],
     });
 
     if (user) {
       if (user.email.toLowerCase() === normalizedEmail) {
-        return NextResponse.json(
-          { error: "This email is already registered." },
-          { status: 409 },
-        );
+        return NextResponse.json({
+          success: false,
+          error: "This email is already registered.",
+        });
       }
       if (user.username.toLowerCase() === normalizedUsername) {
-        return NextResponse.json(
-          { error: "Sorry, that username is not available." },
-          { status: 409 },
-        );
+        return NextResponse.json({
+          success: false,
+          error: "Sorry, that username is not available.",
+        });
       }
     }
+
+    // const db = await getDb();
+    // const user = await db.collection("users").findOne({
+    //   $or: [{ email: normalizedEmail }, { username: normalizedUsername }],
+    // });
+
+    // if (user) {
+    //   if (user.email.toLowerCase() === normalizedEmail) {
+    //     return NextResponse.json(
+    //       { error: "This email is already registered." },
+    //       { status: 409 },
+    //     );
+    //   }
+    //   if (user.username.toLowerCase() === normalizedUsername) {
+    //     return NextResponse.json(
+    //       { error: "Sorry, that username is not available." },
+    //       { status: 409 },
+    //     );
+    //   }
+    // }
 
     // Hash password
     const hashedPassword = await hash(password, 10);
@@ -128,16 +151,14 @@ export async function POST(req) {
       username: normalizedUsername,
       email: normalizedEmail,
       password: hashedPassword,
-      isAdmin: false,
-      role: "user",
-      emailVerified: null,
       verifyToken: token,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
-    const result = await db.collection("users").insertOne(newUser);
-    return NextResponse.json({ result, success: true });
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const res = await User.create(newUser);
+    return NextResponse.json({ success: true, res });
+    // const result = await db.collection("users").insertOne(newUser);
+    // return NextResponse.json({ result, success: true });
+  } catch (err) {
+    return NextResponse.json({ success: false, error: err.message });
   }
 }
