@@ -6,13 +6,7 @@ import { atomic_age } from "@/config/fonts";
 import { Button, Link, Skeleton } from "@heroui/react";
 import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  RiAccountCircleLine,
-  RiCloseLine,
-  RiHome2Line,
-  RiMenuLine,
-  RiShieldUserLine,
-} from "react-icons/ri";
+import { RiAccountCircleLine, RiCloseLine, RiHome2Line, RiMenuLine, RiShieldUserLine } from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
 import Gravatar from "react-gravatar";
 
@@ -190,7 +184,7 @@ const Header = () => {
             onClick={() => setIsUserMenuOpen(false)}
           />
           <div
-            className={`bg-default-100 fixed top-0 right-0 z-30 h-max min-w-[180px] transform transition-transform duration-300 ease-in-out ${isUserMenuOpen ? "translate-y-0 shadow" : "-translate-y-full"}`}
+            className={`bg-default-100 rounded-b-md fixed top-0 right-0 z-30 h-max min-w-[180px] transform transition-transform duration-300 ease-in-out ${isUserMenuOpen ? "translate-y-0 shadow" : "-translate-y-full"}`}
           >
             <div className="flex h-max flex-col justify-between px-4 pt-16 pb-4 md:pt-18">
               {/* Navigation Links */}

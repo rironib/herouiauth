@@ -8,15 +8,24 @@ import { NextResponse } from "next/server";
 /* -------------------------------
    POST NEW CONTACT
 -------------------------------- */
+
 export async function POST(req) {
   try {
     const body = await req.json();
     const { name, email, message, token } = body;
-    if (!name || !email || !message || !token)
+    if (!name || !email || !message || !token) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 },
       );
+    }
+
+    if (message.length < 50) {
+      return NextResponse.json({
+        success: false,
+        message: "Message must be at least 50 characters long",
+      });
+    }
 
     // 🧠 Verify Turnstile token
     const turnstileRes = await axios.post(
@@ -34,16 +43,15 @@ export async function POST(req) {
     }
 
     await connectDB();
-    const contact = new Contact({ name, email, message });
-    await contact.save();
+    await Contact.create({ name, email, message });
     return NextResponse.json({
       success: true,
-      message: "Contact submitted successfully",
+      message: "Message submitted successfully",
     });
-  } catch (err) {
-    return NextResponse.json(
-      { success: false, message: err.message || String(err) },
-      { status: 500 },
-    );
+  } catch (e) {
+    return NextResponse.json({
+      success: false,
+      message: e.message || "Something went wrong.",
+    });
   }
 }
