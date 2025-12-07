@@ -10,7 +10,14 @@ export default function ForgotForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Turnstile
   const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setKey((k) => k + 1);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +42,7 @@ export default function ForgotForm() {
     } catch {
       toast.error("Network error. Please try again.");
     } finally {
+      resetCaptcha();
       setLoading(false);
     }
   };
@@ -57,15 +65,16 @@ export default function ForgotForm() {
             size="lg"
             radius="sm"
             label="Email"
-            placeholder="Enter your email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Turnstile
+            key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             onSuccess={setCaptchaToken}
-            onExpire={() => setCaptchaToken("")}
+            onExpire={resetCaptcha}
+            onError={resetCaptcha}
             size="flexible"
             theme="auto"
             appearance="always"
@@ -83,10 +92,7 @@ export default function ForgotForm() {
           </Button>
         </form>
         <div className="mb-4 text-center text-sm">
-          Remember your password?{" "}
-          <Link href="/auth/login">
-            Login
-          </Link>
+          Remember your password? <Link href="/auth/login">Login</Link>
         </div>
       </div>
     </main>

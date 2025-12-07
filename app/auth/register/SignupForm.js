@@ -10,37 +10,42 @@ import { toast } from "@/components/ui/toast";
 export default function SignupForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
-
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  // Turnstile
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setKey((k) => k + 1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.currentTarget));
-    formData.captchaToken = captchaToken;
     setLoading(true);
     try {
+      const formData = Object.fromEntries(new FormData(e.currentTarget));
+      formData.captchaToken = captchaToken;
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!res.ok) {
-        toast.error(
-          data?.error ||
-            "An error occurred while registration. Please try again.",
-        );
-      } else {
+      if (!data.success) {
+        toast.error(data.message || "Something went wrong. Please try again.");
+      } else if (data.success === true) {
+        e.target.reset();
         router.push("/auth/login");
         toast.success(
-          "Registration successful. Check your email for verification",
+          "Registration successful. Check your email for verification.",
         );
       }
-    } catch (err) {
+    } catch (e) {
       toast.error("Network error. Please try again.");
     } finally {
+      resetCaptcha();
       setLoading(false);
     }
   };
@@ -58,35 +63,29 @@ export default function SignupForm() {
         </div>
         <Form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            isClearable
             name="name"
             size="lg"
             radius="sm"
             variant="bordered"
             label="Full Name"
-            placeholder="Enter your full name"
             type="text"
-            required
+            isRequired
           />
           <Input
-            isClearable
             name="username"
             size="lg"
             radius="sm"
             variant="bordered"
             label="Username"
-            placeholder="Enter your username"
             type="text"
-            required
+            isRequired
           />
           <Input
-            isClearable
             name="email"
             size="lg"
             radius="sm"
             variant="bordered"
             label="Email"
-            placeholder="Enter your email"
             type="email"
             required
           />
@@ -96,7 +95,6 @@ export default function SignupForm() {
             radius="sm"
             variant="bordered"
             label="Password"
-            placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             endContent={
               <button
@@ -112,12 +110,14 @@ export default function SignupForm() {
                 )}
               </button>
             }
-            required
+            isRequired
           />
           <Turnstile
+            key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             onSuccess={setCaptchaToken}
-            onExpire={() => setCaptchaToken("")}
+            onExpire={resetCaptcha}
+            onError={resetCaptcha}
             size="flexible"
             theme="auto"
             appearance="always"

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Button, Divider, Input, Link } from "@heroui/react";
+import { Button, Divider, Form, Input, Link } from "@heroui/react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,11 +15,16 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const authError = searchParams.get("error");
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const router = useRouter();
-  const [captchaToken, setCaptchaToken] = useState("");
   const [isVisible, setIsVisible] = useState(false);
+
+  // Turnstile
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setKey((k) => k + 1);
+  };
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -66,10 +71,10 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     try {
+      const data = Object.fromEntries(new FormData(e.currentTarget));
       const res = await signIn("credentials", {
         redirect: false,
-        email,
-        password,
+        ...data,
         captchaToken,
       });
       if (!res.ok) {
@@ -90,12 +95,12 @@ export default function LoginForm() {
             toast.error(res.error || "Something went wrong. Please try again.");
             break;
         }
-      } else {
-        router.push("/dashboard");
       }
+      router.push("/dashboard");
     } catch (e) {
       toast.error("Network error. Please try again.");
     } finally {
+      resetCaptcha();
       setLoading(false);
     }
   };
@@ -124,19 +129,14 @@ export default function LoginForm() {
           <div className="text-center">OR</div>
           <Divider className="col-span-2" />
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <Form onSubmit={handleSubmit} className="space-y-4">
           <Input
             isRequired
-            isClearable
             name="email"
             variant="bordered"
             size="lg"
             radius="sm"
-            label="Username or Email"
-            placeholder="Enter your email"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Email or Username"
           />
           <Input
             isRequired
@@ -145,10 +145,7 @@ export default function LoginForm() {
             size="lg"
             radius="sm"
             label="Password"
-            placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             endContent={
               <button
                 aria-label="toggle password visibility"
@@ -166,9 +163,11 @@ export default function LoginForm() {
           />
           <Link href="/auth/forgot">Forgot password?</Link>
           <Turnstile
+            key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             onSuccess={setCaptchaToken}
-            onExpire={() => setCaptchaToken("")}
+            onExpire={resetCaptcha}
+            onError={resetCaptcha}
             size="flexible"
             theme="auto"
             appearance="always"
@@ -184,7 +183,7 @@ export default function LoginForm() {
           >
             Login
           </Button>
-        </form>
+        </Form>
         <div className="mb-4 text-center text-sm">
           Do not have an account? <Link href="/auth/register">Sign up</Link>
         </div>

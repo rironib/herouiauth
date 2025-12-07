@@ -14,7 +14,14 @@ export default function ResetClient() {
   const [isVisible, setIsVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Turnstile
   const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setKey((k) => k + 1);
+  };
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -40,6 +47,7 @@ export default function ResetClient() {
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
+      resetCaptcha();
       setLoading(false);
     }
   };
@@ -82,17 +90,17 @@ export default function ResetClient() {
               </button>
             }
           />
-
           <Turnstile
+            key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             onSuccess={setCaptchaToken}
-            onExpire={() => setCaptchaToken("")}
+            onExpire={resetCaptcha}
+            onError={resetCaptcha}
             size="flexible"
             theme="auto"
             appearance="always"
             className="w-full"
           />
-
           <Button
             isLoading={loading}
             radius="sm"

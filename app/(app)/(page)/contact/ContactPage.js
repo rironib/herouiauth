@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import Turnstile from "react-turnstile";
-import { axiosPublic } from "@/lib/useAxiosPublic";
 import { Alert, Button, Form, Input, Textarea } from "@heroui/react";
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [token, setToken] = useState("");
-  const [key, setKey] = useState(0);
 
+  // Turnstile
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
   const resetCaptcha = () => {
-    setToken("");
+    setCaptchaToken("");
     setKey((k) => k + 1);
   };
 
@@ -21,24 +21,31 @@ export default function ContactForm() {
     resetCaptcha();
   };
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setAlert(null);
     setLoading(true);
     try {
-      const data = Object.fromEntries(new FormData(e.currentTarget));
-      const res = await axiosPublic.post("/api/contact", { ...data, token });
-      if (!res.data.success) {
+      const formData = Object.fromEntries(new FormData(e.currentTarget));
+      formData.captchaToken = captchaToken;
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!data.success) {
         setAlert({
           success: false,
-          message: res.data.message || "Failed to send message",
+          message: data.message || "Failed to send message",
         });
         return;
       }
       e.target.reset();
       setAlert({
         success: true,
-        message: res.data.message || "Message sent successfully!",
+        message: data.message || "Message sent successfully!",
       });
     } catch (e) {
       setAlert({
@@ -56,20 +63,42 @@ export default function ContactForm() {
       <div className="mb-6 text-center text-2xl font-bold md:text-3xl xl:text-4xl">
         Contact us
       </div>
-      <Form onSubmit={onSubmit} className="flex flex-col items-center gap-4">
+      <Form onSubmit={handleSubmit} className="space-y-4">
         {alert && (
           <Alert
             color={alert.success ? "success" : "danger"}
             title={alert.message}
           />
         )}
-        <Input name="name" label="Name" radius="sm" isRequired />
-        <Input name="email" label="Email" type="email" radius="sm" isRequired />
-        <Textarea name="message" label="Message" radius="sm" isRequired />
+        <Input
+          name="name"
+          label="Name"
+          variant="bordered"
+          size="lg"
+          radius="sm"
+          isRequired
+        />
+        <Input
+          name="email"
+          label="Email"
+          type="email"
+          variant="bordered"
+          size="lg"
+          radius="sm"
+          isRequired
+        />
+        <Textarea
+          name="message"
+          label="Message"
+          variant="bordered"
+          size="lg"
+          radius="sm"
+          isRequired
+        />
         <Turnstile
           key={key}
           sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-          onSuccess={setToken}
+          onSuccess={setCaptchaToken}
           onExpire={resetCaptcha}
           onError={resetCaptcha}
           size="flexible"

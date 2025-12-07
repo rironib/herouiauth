@@ -14,7 +14,14 @@ export default function VerifyForm() {
   const token = params.get("token");
 
   const [loading, setLoading] = useState(false);
+
+  // Turnstile
   const [captchaToken, setCaptchaToken] = useState("");
+  const [key, setKey] = useState(0);
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setKey((k) => k + 1);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +49,7 @@ export default function VerifyForm() {
     } catch (err) {
       toast.error("Something went wrong. Please try again later.");
     } finally {
+      resetCaptcha();
       setLoading(false);
     }
   };
@@ -70,9 +78,11 @@ export default function VerifyForm() {
             required
           />
           <Turnstile
+            key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             onSuccess={setCaptchaToken}
-            onExpire={() => setCaptchaToken("")}
+            onExpire={resetCaptcha}
+            onError={resetCaptcha}
             size="flexible"
             theme="auto"
             appearance="always"
