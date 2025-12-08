@@ -4,7 +4,7 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
-import { RiMoonFill, RiSunFill } from "react-icons/ri";
+import { RiMoonLine, RiSunLine } from "react-icons/ri";
 import { useSwitch } from "@heroui/react";
 
 export const ThemeSwitch = ({ className, classNames }) => {
@@ -61,9 +61,9 @@ export const ThemeSwitch = ({ className, classNames }) => {
         })}
       >
         {!isSelected || isSSR ? (
-          <RiSunFill size={22} />
+          <RiSunLine size={24} />
         ) : (
-          <RiMoonFill size={22} />
+          <RiMoonLine size={24} />
         )}
       </div>
     </Component>

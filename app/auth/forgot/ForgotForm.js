@@ -48,23 +48,22 @@ export default function ForgotForm() {
   };
 
   return (
-    <main className="flex h-full items-center justify-center">
-      <div className="w-full max-w-md space-y-4">
-        <div className="text-center">
+    <main className="flex h-full min-h-[80dvh] items-center justify-center">
+      <div className="w-full max-w-md space-y-3">
+        <div className="mb-8 text-center">
           <h2 className="mb-2 text-3xl font-bold">Forgot Password</h2>
           <p className="text-sm">
             You will receive an email with a link to reset your password
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <Input
             isRequired
             isClearable
             name="email"
             variant="bordered"
-            size="lg"
             radius="sm"
-            label="Email"
+            label="Email Address"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -91,7 +90,7 @@ export default function ForgotForm() {
             Send Reset Link
           </Button>
         </form>
-        <div className="mb-4 text-center text-sm">
+        <div className="text-center text-sm">
           Remember your password? <Link href="/auth/login">Login</Link>
         </div>
       </div>

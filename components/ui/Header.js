@@ -3,12 +3,18 @@
 import { useState } from "react";
 import { siteConfig } from "@/config/site";
 import { atomic_age } from "@/config/fonts";
-import { Button, Link, Skeleton } from "@heroui/react";
+import { Avatar, Button, Link, Skeleton } from "@heroui/react";
 import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { RiAccountCircleLine, RiCloseLine, RiHome2Line, RiMenuLine, RiShieldUserLine } from "react-icons/ri";
+import {
+  RiAccountCircleLine,
+  RiCloseLine,
+  RiHome4Line,
+  RiLogoutCircleRLine,
+  RiMenuLine,
+  RiShieldUserLine,
+} from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
-import Gravatar from "react-gravatar";
 
 export const AcmeLogo = () => (
   <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -89,10 +95,11 @@ const Header = () => {
             {status === "loading" ? (
               <Skeleton className="flex h-8 w-8 rounded-full" />
             ) : session?.user || session?.user?.email ? (
-              <Gravatar
+              <Avatar
+                size="sm"
+                className="border-default-400 dark:border-default-400 hover:border-primary cursor-pointer rounded-full border-2 transition-colors"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="border-secondary-400 w-8 cursor-pointer rounded-full border-2 bg-black p-0.5 sm:w-10"
-                email={session?.user?.email}
+                src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
               />
             ) : (
               <div className="hidden items-center gap-3 lg:flex">
@@ -184,30 +191,41 @@ const Header = () => {
             onClick={() => setIsUserMenuOpen(false)}
           />
           <div
-            className={`bg-default-100 rounded-b-md fixed top-0 right-0 z-30 h-max min-w-[180px] transform transition-transform duration-300 ease-in-out ${isUserMenuOpen ? "translate-y-0 shadow" : "-translate-y-full"}`}
+            className={`bg-default-100 fixed top-0 right-0 z-30 h-max min-w-[240px] transform rounded-b-md transition-transform duration-300 ease-in-out lg:min-w-[280px] ${isUserMenuOpen ? "translate-y-0 shadow" : "-translate-y-full"}`}
           >
             <div className="flex h-max flex-col justify-between px-4 pt-16 pb-4 md:pt-18">
               {/* Navigation Links */}
-              <div className="mb-4">
+              <div className="mb-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <Gravatar
-                    className="border-secondary-400 w-8 cursor-pointer rounded-full border-2 bg-black p-0.5 sm:w-10"
-                    email={session?.user?.email}
+                  <Avatar
+                    className="border-default-400 dark:border-default-400 hover:border-primary cursor-pointer rounded-full border-2 transition-colors"
+                    src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
                   />
                   <div className="flex flex-col">
-                    <p className="text-sm font-medium">{session?.user?.name}</p>
-                    <p className="text-muted-foreground text-xs">{session?.user?.username}</p>
+                    <p className="font-medium">{session?.user?.name}</p>
+                    <p className="text-xs capitalize">
+                      {session?.user?.username}
+                    </p>
                   </div>
                 </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-danger-400 cursor-pointer"
+                >
+                  <RiLogoutCircleRLine
+                    size={20}
+                    className="hover:text-danger-500"
+                  />
+                </button>
               </div>
-              <div className="mb-4 space-y-2">
+              <div className="space-y-2">
                 <Link
                   href="/"
                   color={pathname === "/" ? "primary" : "foreground"}
                   className="hover:text-primary flex items-center gap-2 font-medium"
                   onClick={() => setIsUserMenuOpen(false)}
                 >
-                  <RiHome2Line /> Home
+                  <RiHome4Line /> Home
                 </Link>
                 {session?.user?.isAdmin && (
                   <Link
@@ -228,16 +246,6 @@ const Header = () => {
                   <RiAccountCircleLine /> Dashboard
                 </Link>
               </div>
-
-              <Button
-                fullWidth
-                color="danger"
-                variant="ghost"
-                radius="sm"
-                onClick={handleLogout}
-              >
-                Log Out
-              </Button>
             </div>
           </div>
         </>

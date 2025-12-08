@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Button, Divider, Form, Input, Link } from "@heroui/react";
+import { Button, Checkbox, Divider, Form, Input, Link } from "@heroui/react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -106,17 +106,19 @@ export default function LoginForm() {
   };
 
   return (
-    <main className="flex h-full items-center justify-center">
-      <div className="w-full max-w-md space-y-4">
-        <div className="text-center">
+    <main className="flex h-full min-h-[80dvh] items-center justify-center">
+      <div className="w-full max-w-md space-y-3">
+        <div className="mb-8 text-center">
           <h2 className="mb-2 text-3xl font-bold">Welcome back</h2>
           <p className="text-sm">Login with your Apple or Google account</p>
         </div>
         <div>
           <Button
+            fullWidth
             size="lg"
             radius="sm"
-            className="mt-4 w-full"
+            color="primary"
+            variant="flat"
             type="button"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           >
@@ -129,12 +131,11 @@ export default function LoginForm() {
           <div className="text-center">OR</div>
           <Divider className="col-span-2" />
         </div>
-        <Form onSubmit={handleSubmit} className="space-y-4">
+        <Form onSubmit={handleSubmit} className="space-y-2">
           <Input
             isRequired
             name="email"
             variant="bordered"
-            size="lg"
             radius="sm"
             label="Email or Username"
           />
@@ -142,7 +143,6 @@ export default function LoginForm() {
             isRequired
             name="password"
             variant="bordered"
-            size="lg"
             radius="sm"
             label="Password"
             type={isVisible ? "text" : "password"}
@@ -161,7 +161,6 @@ export default function LoginForm() {
               </button>
             }
           />
-          <Link href="/auth/forgot">Forgot password?</Link>
           <Turnstile
             key={key}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
@@ -173,6 +172,14 @@ export default function LoginForm() {
             appearance="always"
             className="w-full"
           />
+          <div className="flex w-full items-center justify-between">
+            <Checkbox name="remember" defaultSelected>
+              Remember me
+            </Checkbox>
+            <Link className="text-primary-500" href="/auth/forgot">
+              Forgot password?
+            </Link>
+          </div>
           <Button
             isLoading={loading}
             radius="sm"
@@ -184,8 +191,11 @@ export default function LoginForm() {
             Login
           </Button>
         </Form>
-        <div className="mb-4 text-center text-sm">
-          Do not have an account? <Link href="/auth/register">Sign up</Link>
+        <div className="text-center text-sm">
+          Do not have an account?{" "}
+          <Link className="text-primary-500" href="/auth/register">
+            Sign up
+          </Link>
         </div>
       </div>
     </main>

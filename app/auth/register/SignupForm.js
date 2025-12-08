@@ -51,20 +51,19 @@ export default function SignupForm() {
   };
 
   return (
-    <main className="flex h-full items-center justify-center">
-      <div className="w-full max-w-md space-y-4">
-        <div className="text-center">
-          <h2 className="mb-2 text-3xl font-bold">Welcome back</h2>
+    <main className="flex h-full min-h-[80dvh] items-center justify-center">
+      <div className="w-full max-w-md space-y-3">
+        <div className="mb-8 text-center">
+          <h2 className="mb-2 text-3xl font-bold">Create Account</h2>
           <p className="text-sm">
             Password must be at least 8 characters long and contain at least one
             uppercase letter, one lowercase letter, one number, and one special
             character.
           </p>
         </div>
-        <Form onSubmit={handleSubmit} className="space-y-4">
+        <Form onSubmit={handleSubmit} className="space-y-2">
           <Input
             name="name"
-            size="lg"
             radius="sm"
             variant="bordered"
             label="Full Name"
@@ -73,7 +72,6 @@ export default function SignupForm() {
           />
           <Input
             name="username"
-            size="lg"
             radius="sm"
             variant="bordered"
             label="Username"
@@ -82,16 +80,14 @@ export default function SignupForm() {
           />
           <Input
             name="email"
-            size="lg"
             radius="sm"
             variant="bordered"
             label="Email"
             type="email"
-            required
+            isRequired
           />
           <Input
             name="password"
-            size="lg"
             radius="sm"
             variant="bordered"
             label="Password"
@@ -134,7 +130,7 @@ export default function SignupForm() {
             Create account
           </Button>
         </Form>
-        <div className="mb-4 text-center text-sm">
+        <div className="text-center text-sm">
           Already have an account? <Link href="/auth/login">Login</Link>
         </div>
       </div>
