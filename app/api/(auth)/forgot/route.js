@@ -1,11 +1,11 @@
 // app/api/forgot/route.js
 
-import { NextResponse } from "next/server";
-import { sendPasswordResetEmail } from "@/lib/mailer";
-import crypto from "node:crypto";
-import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import connectDB from "@/lib/db";
+import { sendPasswordResetEmail } from "@/lib/mailer";
+import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import User from "@/models/User";
+import { NextResponse } from "next/server";
+import crypto from "node:crypto";
 
 const EMAIL_REGEX = new RegExp(/^[A-Za-z0-9._]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/);
 const RESET_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -23,20 +23,16 @@ export async function POST(req) {
     // ✅ Validate captcha using our helper
     const captcha = await verifyTurnstile(captchaToken);
     if (!captcha.success) {
-      return NextResponse.json({ error: captcha.error }, { status: 403 });
+      return NextResponse.json(captcha.error, { status: 403 });
     }
 
     switch (true) {
       case !email:
-        return NextResponse.json(
-          { error: "Email is required" },
-          { status: 400 },
-        );
+        return NextResponse.json("Email is required", { status: 400 });
       case !isValidEmail(email):
-        return NextResponse.json(
-          { error: "Enter a valid email address." },
-          { status: 400 },
-        );
+        return NextResponse.json("Enter a valid email address.", {
+          status: 400,
+        });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -46,18 +42,14 @@ export async function POST(req) {
 
     if (!user) {
       return NextResponse.json(
-        {
-          error:
-            "If the email is registered, you will receive a password reset link.",
-        },
+        "If the email is registered, you will receive a password reset link.",
         { status: 200 },
       );
     }
     if (!user.emailVerified) {
-      return NextResponse.json(
-        { error: "Your account is not verified." },
-        { status: 403 },
-      );
+      return NextResponse.json("Your account is not verified.", {
+        status: 403,
+      });
     }
 
     const lastSent = user.resetLastSent ? new Date(user.resetLastSent) : null;
@@ -69,9 +61,7 @@ export async function POST(req) {
       const hours = Math.floor(remaining / (60 * 60 * 1000));
       const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
       return NextResponse.json(
-        {
-          error: `Please wait ${hours} hour(s) and ${minutes} minute(s) before requesting again.`,
-        },
+        `Please wait ${hours} hour(s) and ${minutes} minute(s) before requesting again.`,
         { status: 429 },
       );
     }
@@ -89,8 +79,11 @@ export async function POST(req) {
       { $set: { resetToken, resetTokenExpiry, resetLastSent: now } },
     );
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "Password reset link sent.",
+    });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(error.message, { status: 500 });
   }
 }

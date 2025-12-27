@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Providers } from "./providers";
 import Analytics from "../components/Analytics";
-import { hind_siliguri } from "@/config/fonts";
+import { hind_siliguri } from "@/lib/fonts";
 import Header from "../components/ui/Header";
 import Footer from "../components/ui/Footer";
 import { siteConfig } from "@/config/site";

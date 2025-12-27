@@ -1,12 +1,12 @@
 // app/api/auth/[...nextauth]/route.js
 
-import NextAuth from "next-auth";
-import { compare } from "bcrypt";
-import User from "@/models/User";
 import connectDB from "@/lib/db";
-import GoogleProvider from "next-auth/providers/google";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import User from "@/models/User";
+import { compare } from "bcrypt";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -14,7 +14,7 @@ const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email or Username", type: "text" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
         captchaToken: { label: "Captcha Token", type: "text" },
       },
@@ -31,19 +31,17 @@ const authOptions = {
           throw new Error("All fields are required.");
         }
 
-        // Find user by email or username
+        // Find user by email
         const input = credentials.email.trim().toLowerCase();
-        const user = await User.findOne({
-          $or: [{ email: input }, { username: input }],
-        });
+        const user = await User.findOne({ email: input });
 
         if (!user || !user.password) {
-          throw new Error("Invalid email/username or password.");
+          throw new Error("Invalid email or password.");
         }
 
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
-          throw new Error("Invalid email/username or password.");
+          throw new Error("Invalid email or password.");
         }
 
         if (!user.emailVerified) {
@@ -92,7 +90,6 @@ const authOptions = {
         token.email = dbUser.email;
         token.isAdmin = dbUser.isAdmin;
         token.name = dbUser.name;
-        token.username = dbUser.username || "";
         token.image = dbUser.image || "";
         token.emailVerified = dbUser.emailVerified ? true : false;
       }
@@ -103,7 +100,6 @@ const authOptions = {
         id: token.id,
         email: token.email,
         name: token.name,
-        username: token.username,
         isAdmin: token.isAdmin,
         image: token.image,
         emailVerified: token.emailVerified,

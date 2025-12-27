@@ -33,9 +33,9 @@ export default function SignupForm() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!data.success) {
-        toast.error(data.message || "Something went wrong. Please try again.");
-      } else if (data.success === true) {
+      if (!res.ok) {
+        toast.error(data || "Something went wrong. Please try again.");
+      } else {
         e.target.reset();
         router.push("/auth/login");
         toast.success(
@@ -52,7 +52,7 @@ export default function SignupForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+      <div className="w-full max-w-md rounded-md px-3 py-6">
         <div className="pb-6 text-center">
           <h2 className="text-3xl font-bold">Create Account</h2>
           <p className="text-sm">
@@ -67,16 +67,6 @@ export default function SignupForm() {
             label="Full Name"
             labelPlacement="outside"
             placeholder="Enter your name"
-            type="text"
-            isRequired
-          />
-          <Input
-            name="username"
-            radius="sm"
-            variant="bordered"
-            label="Username"
-            labelPlacement="outside"
-            placeholder="Enter your username"
             type="text"
             isRequired
           />

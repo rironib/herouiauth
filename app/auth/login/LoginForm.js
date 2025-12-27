@@ -112,7 +112,7 @@ export default function LoginForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+      <div className="w-full max-w-md rounded-md px-3 py-6">
         <div className="pb-6 text-center">
           <h2 className="text-3xl font-bold">Welcome back</h2>
           <p className="text-sm">
@@ -125,9 +125,9 @@ export default function LoginForm() {
             name="email"
             variant="bordered"
             radius="sm"
-            label="Email or Username"
+            label="Email"
             labelPlacement="outside"
-            placeholder="Enter your username or email"
+            placeholder="Enter your email"
           />
           <Input
             isRequired

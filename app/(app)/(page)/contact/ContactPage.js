@@ -1,8 +1,8 @@
 "use client";
 
+import { Alert, Button, Form, Input, Textarea } from "@heroui/react";
 import { useState } from "react";
 import Turnstile from "react-turnstile";
-import { Alert, Button, Form, Input, Textarea } from "@heroui/react";
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
@@ -35,10 +35,10 @@ export default function ContactForm() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!data.success) {
+      if (!res.ok) {
         setAlert({
           success: false,
-          message: data.message || "Failed to send message",
+          message: data || "Failed to send message",
         });
         return;
       }

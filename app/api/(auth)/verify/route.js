@@ -1,24 +1,23 @@
 // app/api/verify/route.js
 
-import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import User from "@/models/User";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import User from "@/models/User";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { token, captchaToken } = await req.json();
 
   if (!token) {
-    return NextResponse.json({
-      success: false,
-      error: "Verification token is required.",
+    return NextResponse.json("Verification token is required.", {
+      status: 400,
     });
   }
 
   // ✅ Validate captcha using our helper
   const captcha = await verifyTurnstile(captchaToken);
   if (!captcha.success) {
-    return NextResponse.json({ success: false, error: captcha.error });
+    return NextResponse.json(captcha.error, { status: 403 });
   }
 
   try {
@@ -26,24 +25,21 @@ export async function POST(req) {
     const user = await User.findOne({ verifyToken: token });
 
     if (!user) {
-      return NextResponse.json({
-        success: false,
-        error: "Invalid verification token.",
-      });
+      return NextResponse.json("Invalid verification token.", { status: 400 });
     }
 
     if (user?.emailVerified) {
-      return NextResponse.json({
-        success: false,
-        error: "Email already verified.",
-      });
+      return NextResponse.json("Email already verified.", { status: 400 });
     }
     await User.updateOne(
       { verifyToken: token },
       { $set: { emailVerified: new Date() } },
     );
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "Email verified successfully.",
+    });
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message });
+    return NextResponse.json(err.message, { status: 500 });
   }
 }

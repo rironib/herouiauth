@@ -35,10 +35,9 @@ export default function VerifyForm() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!data.success) {
+      if (!res.ok) {
         toast.error(
-          data?.error ||
-            "An error occurred while verification. Please try again.",
+          data || "An error occurred while verification. Please try again.",
         );
       } else {
         router.push("/auth/login");
@@ -56,7 +55,7 @@ export default function VerifyForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+      <div className="w-full max-w-md rounded-md px-3 py-6">
         <div className="pb-6 text-center">
           <h2 className="text-3xl font-bold">Verify yourself</h2>
           <p className="text-sm">

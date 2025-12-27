@@ -1,9 +1,9 @@
 // api/contact/route.js
 
 import connectDB from "@/lib/db";
+import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import Contact from "@/models/Contact";
 import { NextResponse } from "next/server";
-import { verifyTurnstile } from "@/lib/verifyTurnstile";
 
 /* -------------------------------
    POST NEW CONTACT
@@ -21,37 +21,29 @@ export async function POST(req) {
     }
 
     if (message.length < 50) {
-      return NextResponse.json({
-        success: false,
-        message: "Message must be at least 50 characters long",
+      return NextResponse.json("Message must be at least 50 characters long", {
+        status: 400,
       });
     }
 
     // ✅ Validate captcha using our helper
     const captcha = await verifyTurnstile(captchaToken);
     if (!captcha.success) {
-      return NextResponse.json(
-        { success: false, message: captcha.error },
-        { status: 403 },
-      );
+      return NextResponse.json(captcha.error, { status: 403 });
     }
 
     await connectDB();
     const res = await Contact.create({ name, email, message });
     if (!res._id) {
-      return NextResponse.json({
-        success: false,
-        message: "Something went wrong",
-      });
+      return NextResponse.json("Something went wrong", { status: 500 });
     }
     return NextResponse.json({
       success: true,
       message: "Message submitted successfully",
     });
   } catch (e) {
-    return NextResponse.json({
-      success: false,
-      message: e.message || "Something went wrong.",
+    return NextResponse.json(e.message || "Something went wrong.", {
+      status: 500,
     });
   }
 }

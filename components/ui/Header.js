@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { siteConfig } from "@/config/site";
-import { atomic_age } from "@/config/fonts";
-import { Avatar, Button, Link, Skeleton } from "@heroui/react";
-import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { siteConfig } from "@/config/site";
+import { atomic_age } from "@/lib/fonts";
+import { Avatar, Button, Link, Skeleton } from "@heroui/react";
+import { signOut, useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   RiAccountCircleLine,
   RiCloseLine,
@@ -14,7 +15,6 @@ import {
   RiMenuLine,
   RiShieldUserLine,
 } from "react-icons/ri";
-import { signOut, useSession } from "next-auth/react";
 
 export const AcmeLogo = () => (
   <svg fill="none" height="36" viewBox="0 0 32 32" width="36">

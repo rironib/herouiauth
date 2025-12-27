@@ -32,7 +32,7 @@ export default function ForgotForm() {
       const data = await res.json();
       if (!res.ok) {
         toast.error(
-          data?.error ||
+          data ||
             "An error occurred while resetting your password. Please try again.",
         );
       } else {
@@ -49,7 +49,7 @@ export default function ForgotForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+      <div className="w-full max-w-md rounded-md px-3 py-6">
         <div className="pb-6 text-center">
           <h2 className="text-3xl font-bold">Forgot Password</h2>
           Remember your password? <Link href="/auth/login">login</Link>

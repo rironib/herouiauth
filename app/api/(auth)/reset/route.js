@@ -1,10 +1,10 @@
 // app/api/reset/route.js
 
-import { hash } from "bcrypt";
 import connectDB from "@/lib/db";
-import User from "@/models/User";
-import { NextResponse } from "next/server";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
+import User from "@/models/User";
+import { hash } from "bcrypt";
+import { NextResponse } from "next/server";
 
 // Password strength checker
 function isStrongPassword(password) {
@@ -18,26 +18,19 @@ export async function POST(req) {
     // ✅ Validate captcha using our helper
     const captcha = await verifyTurnstile(captchaToken);
     if (!captcha.success) {
-      return NextResponse.json({ error: captcha.error }, { status: 403 });
+      return NextResponse.json(captcha.error, { status: 403 });
     }
 
     switch (true) {
       case !token:
-        return NextResponse.json(
-          { error: "Verification token is required." },
-          { status: 400 },
-        );
+        return NextResponse.json("Verification token is required.", {
+          status: 400,
+        });
       case !newPassword:
-        return NextResponse.json(
-          { error: "New password is required." },
-          { status: 400 },
-        );
+        return NextResponse.json("New password is required.", { status: 400 });
       case !isStrongPassword(newPassword):
         return NextResponse.json(
-          {
-            error:
-              "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.",
-          },
+          "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.",
           { status: 400 },
         );
     }
@@ -46,20 +39,17 @@ export async function POST(req) {
     const user = await User.findOne({ resetToken: token });
     switch (true) {
       case !user:
-        return NextResponse.json(
-          { error: "The provided token is invalid." },
-          { status: 400 },
-        );
+        return NextResponse.json("The provided token is invalid.", {
+          status: 400,
+        });
       case !user.resetTokenExpiry:
-        return NextResponse.json(
-          { error: "The provided token is invalid." },
-          { status: 400 },
-        );
+        return NextResponse.json("The provided token is invalid.", {
+          status: 400,
+        });
       case new Date(user.resetTokenExpiry) < new Date():
-        return NextResponse.json(
-          { error: "The provided token has been expired." },
-          { status: 400 },
-        );
+        return NextResponse.json("The provided token has been expired.", {
+          status: 400,
+        });
     }
 
     const hashedPassword = await hash(newPassword, 10);
@@ -73,8 +63,11 @@ export async function POST(req) {
       },
     );
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "Password has been reset successfully.",
+    });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(error.message, { status: 500 });
   }
 }

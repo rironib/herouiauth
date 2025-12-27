@@ -3,7 +3,7 @@
   "version": "1.0.20251020",
   "private": true,
   "type": "module",
-  "description": "A Next.js starter app with TailwindCSS and HeroUI",
+  "description": "The Ultimate Next.js Starter Kit with HeroUI and NextAuth",
   "author": "RONiB",
   "repository": {
     "type": "git",
