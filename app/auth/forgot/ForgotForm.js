@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, Input, Link } from "@heroui/react";
-import Turnstile from "react-turnstile";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
+import { Button, Input, Link } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Turnstile from "react-turnstile";
 
 export default function ForgotForm() {
   const router = useRouter();
@@ -49,50 +49,49 @@ export default function ForgotForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="w-full max-w-md space-y-3">
-        <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-bold">Forgot Password</h2>
-          <p className="text-sm">
-            You will receive an email with a link to reset your password
-          </p>
+      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+        <div className="pb-6 text-center">
+          <h2 className="text-3xl font-bold">Forgot Password</h2>
+          Remember your password? <Link href="/auth/login">login</Link>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="grid gap-4">
           <Input
             isRequired
             isClearable
             name="email"
             variant="bordered"
             radius="sm"
-            label="Email Address"
+            label="Email"
+            labelPlacement="outside"
+            placeholder="Enter your email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Turnstile
-            key={key}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            onSuccess={setCaptchaToken}
-            onExpire={resetCaptcha}
-            onError={resetCaptcha}
-            size="flexible"
-            theme="auto"
-            appearance="always"
-            className="w-full"
-          />
+          <div className="w-full">
+            <div className="pb-2 text-sm">Let us know you're human</div>
+            <Turnstile
+              key={key}
+              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+              onExpire={resetCaptcha}
+              onError={resetCaptcha}
+              size="flexible"
+              theme="auto"
+              appearance="always"
+              className="w-full"
+            />
+          </div>
           <Button
             isLoading={loading}
             radius="sm"
             color="primary"
-            size="lg"
             type="submit"
             className="w-full"
           >
             Send Reset Link
           </Button>
         </form>
-        <div className="text-center text-sm">
-          Remember your password? <Link href="/auth/login">Login</Link>
-        </div>
       </div>
     </main>
   );

@@ -2,14 +2,19 @@
 
 "use client";
 
+import { toast } from "@/components/ui/toast";
 import { Button, Checkbox, Divider, Form, Input, Link } from "@heroui/react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
-import { FcGoogle } from "react-icons/fc";
+import {
+  RiEyeLine,
+  RiEyeOffLine,
+  RiFacebookFill,
+  RiGithubLine,
+  RiGoogleLine,
+} from "react-icons/ri";
 import Turnstile from "react-turnstile";
-import { toast } from "@/components/ui/toast";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -107,37 +112,22 @@ export default function LoginForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="w-full max-w-md space-y-3">
-        <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-bold">Welcome back</h2>
-          <p className="text-sm">Login with your Apple or Google account</p>
+      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+        <div className="pb-6 text-center">
+          <h2 className="text-3xl font-bold">Welcome back</h2>
+          <p className="text-sm">
+            Do not have an account? <Link href="/auth/register">Sign up</Link>
+          </p>
         </div>
-        <div>
-          <Button
-            fullWidth
-            size="lg"
-            radius="sm"
-            color="primary"
-            variant="flat"
-            type="button"
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          >
-            <FcGoogle />
-            Sign in with Google
-          </Button>
-        </div>
-        <div className="grid grid-cols-5 items-center">
-          <Divider className="col-span-2" />
-          <div className="text-center">OR</div>
-          <Divider className="col-span-2" />
-        </div>
-        <Form onSubmit={handleSubmit} className="space-y-2">
+        <Form onSubmit={handleSubmit} className="grid gap-4">
           <Input
             isRequired
             name="email"
             variant="bordered"
             radius="sm"
             label="Email or Username"
+            labelPlacement="outside"
+            placeholder="Enter your username or email"
           />
           <Input
             isRequired
@@ -145,6 +135,8 @@ export default function LoginForm() {
             variant="bordered"
             radius="sm"
             label="Password"
+            labelPlacement="outside"
+            placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             endContent={
               <button
@@ -154,24 +146,27 @@ export default function LoginForm() {
                 onClick={toggleVisibility}
               >
                 {isVisible ? (
-                  <RiEyeOffLine className="text-default-400 pointer-events-none text-xl" />
+                  <RiEyeOffLine className="text-default-400 pointer-events-none" />
                 ) : (
-                  <RiEyeLine className="text-default-400 pointer-events-none text-xl" />
+                  <RiEyeLine className="text-default-400 pointer-events-none" />
                 )}
               </button>
             }
           />
-          <Turnstile
-            key={key}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            onSuccess={setCaptchaToken}
-            onExpire={resetCaptcha}
-            onError={resetCaptcha}
-            size="flexible"
-            theme="auto"
-            appearance="always"
-            className="w-full"
-          />
+          <div className="w-full">
+            <div className="pb-2 text-sm">Let us know you're human</div>
+            <Turnstile
+              key={key}
+              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+              onExpire={resetCaptcha}
+              onError={resetCaptcha}
+              size="flexible"
+              theme="auto"
+              appearance="always"
+              className="w-full"
+            />
+          </div>
           <div className="flex w-full items-center justify-between">
             <Checkbox name="remember" defaultSelected>
               Remember me
@@ -184,18 +179,44 @@ export default function LoginForm() {
             isLoading={loading}
             radius="sm"
             color="primary"
-            size="lg"
             type="submit"
             className="w-full"
           >
             Login
           </Button>
         </Form>
-        <div className="text-center text-sm">
-          Do not have an account?{" "}
-          <Link className="text-primary-500" href="/auth/register">
-            Sign up
-          </Link>
+        <div className="my-4 grid grid-cols-5 items-center">
+          <Divider className="col-span-2" />
+          <div className="text-center">OR</div>
+          <Divider className="col-span-2" />
+        </div>
+        <div className="flex justify-center gap-4">
+          <Button
+            isIconOnly
+            color="primary"
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          >
+            <RiGoogleLine size="20" />
+          </Button>
+          <Button
+            isDisabled
+            isIconOnly
+            color="success"
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          >
+            <RiFacebookFill size="20" />
+          </Button>
+          <Button
+            isDisabled
+            isIconOnly
+            color="default"
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          >
+            <RiGithubLine size="20" />
+          </Button>
         </div>
       </div>
     </main>

@@ -1,11 +1,11 @@
 "use client";
 
+import { toast } from "@/components/ui/toast";
+import { Button, Input, Link } from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Button, Input, Link } from "@heroui/react";
 import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import Turnstile from "react-turnstile";
-import { toast } from "@/components/ui/toast";
 
 export default function ResetClient() {
   const router = useRouter();
@@ -54,22 +54,22 @@ export default function ResetClient() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="w-full max-w-md space-y-3">
-        <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-bold">Reset Password</h2>
+      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+        <div className="pb-6 text-center">
+          <h2 className="text-3xl font-bold">Reset Password</h2>
           <p className="text-sm">
-            Password must be at least 8 characters long and contain at least one
-            uppercase letter, one lowercase letter, one number, and one special
-            character.
+            Remember your password? <Link href="/auth/login">login</Link>
           </p>
         </div>
-        <form onSubmit={handleReset} className="space-y-2">
+        <form onSubmit={handleReset} className="grid gap-4">
           <Input
             isRequired
             name="password"
             variant="bordered"
             radius="sm"
             label="New Password"
+            labelPlacement="outside"
+            placeholder="Enter new password"
             type={isVisible ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -81,38 +81,37 @@ export default function ResetClient() {
                 className="focus:outline-none"
               >
                 {isVisible ? (
-                  <RiEyeOffLine className="text-default-400 pointer-events-none text-2xl" />
+                  <RiEyeOffLine className="text-default-400 pointer-events-none" />
                 ) : (
-                  <RiEyeLine className="text-default-400 pointer-events-none text-2xl" />
+                  <RiEyeLine className="text-default-400 pointer-events-none" />
                 )}
               </button>
             }
           />
-          <Turnstile
-            key={key}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            onSuccess={setCaptchaToken}
-            onExpire={resetCaptcha}
-            onError={resetCaptcha}
-            size="flexible"
-            theme="auto"
-            appearance="always"
-            className="w-full"
-          />
+          <div className="w-full">
+            <div className="pb-2 text-sm">Let us know you're human</div>
+            <Turnstile
+              key={key}
+              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+              onExpire={resetCaptcha}
+              onError={resetCaptcha}
+              size="flexible"
+              theme="auto"
+              appearance="always"
+              className="w-full"
+            />
+          </div>
           <Button
             isLoading={loading}
             radius="sm"
             color="primary"
-            size="lg"
             type="submit"
             className="w-full"
           >
             Reset Password
           </Button>
         </form>
-        <div className="text-center text-sm">
-          Remember your password? <Link href="/auth/login">Login</Link>
-        </div>
       </div>
     </main>
   );

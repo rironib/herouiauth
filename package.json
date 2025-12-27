@@ -2,6 +2,7 @@
   "name": "herouiauth",
   "version": "1.0.20251020",
   "private": true,
+  "type": "module",
   "description": "A Next.js starter app with TailwindCSS and HeroUI",
   "author": "RONiB",
   "repository": {
@@ -9,15 +10,15 @@
     "url": "https://github.com/rironib/herouiauth.git"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix"
   },
   "dependencies": {
-    "@heroui/react": "^2.8.5",
-    "@heroui/system": "^2.4.23",
-    "@heroui/theme": "^2.4.23",
+    "@heroui/react": "^2.8.7",
+    "@heroui/system": "^2.4.25",
+    "@heroui/theme": "^2.4.25",
     "@react-aria/ssr": "^3.9.10",
     "@react-aria/visually-hidden": "^3.8.28",
     "axios": "^1.13.2",

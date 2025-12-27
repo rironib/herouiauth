@@ -1,11 +1,11 @@
 "use client";
 
+import { toast } from "@/components/ui/toast";
 import { Button, Form, Input, Link } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import Turnstile from "react-turnstile";
-import { toast } from "@/components/ui/toast";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -52,21 +52,21 @@ export default function SignupForm() {
 
   return (
     <main className="flex h-full min-h-[80dvh] items-center justify-center">
-      <div className="w-full max-w-md space-y-3">
-        <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-bold">Create Account</h2>
+      <div className="bg-default-50 w-full max-w-md rounded-md px-3 py-6">
+        <div className="pb-6 text-center">
+          <h2 className="text-3xl font-bold">Create Account</h2>
           <p className="text-sm">
-            Password must be at least 8 characters long and contain at least one
-            uppercase letter, one lowercase letter, one number, and one special
-            character.
+            Already have an account? <Link href="/auth/login">login</Link>
           </p>
         </div>
-        <Form onSubmit={handleSubmit} className="space-y-2">
+        <Form onSubmit={handleSubmit} className="grid gap-4">
           <Input
             name="name"
             radius="sm"
             variant="bordered"
             label="Full Name"
+            labelPlacement="outside"
+            placeholder="Enter your name"
             type="text"
             isRequired
           />
@@ -75,6 +75,8 @@ export default function SignupForm() {
             radius="sm"
             variant="bordered"
             label="Username"
+            labelPlacement="outside"
+            placeholder="Enter your username"
             type="text"
             isRequired
           />
@@ -83,6 +85,8 @@ export default function SignupForm() {
             radius="sm"
             variant="bordered"
             label="Email"
+            labelPlacement="outside"
+            placeholder="Enter your email"
             type="email"
             isRequired
           />
@@ -91,6 +95,8 @@ export default function SignupForm() {
             radius="sm"
             variant="bordered"
             label="Password"
+            labelPlacement="outside"
+            placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             endContent={
               <button
@@ -100,39 +106,38 @@ export default function SignupForm() {
                 onClick={toggleVisibility}
               >
                 {isVisible ? (
-                  <RiEyeOffLine className="text-default-400 pointer-events-none text-2xl" />
+                  <RiEyeOffLine className="text-default-400 pointer-events-none" />
                 ) : (
-                  <RiEyeLine className="text-default-400 pointer-events-none text-2xl" />
+                  <RiEyeLine className="text-default-400 pointer-events-none" />
                 )}
               </button>
             }
             isRequired
           />
-          <Turnstile
-            key={key}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            onSuccess={setCaptchaToken}
-            onExpire={resetCaptcha}
-            onError={resetCaptcha}
-            size="flexible"
-            theme="auto"
-            appearance="always"
-            className="w-full"
-          />
+          <div className="w-full">
+            <div className="pb-2 text-sm">Let us know you're human</div>
+            <Turnstile
+              key={key}
+              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+              onExpire={resetCaptcha}
+              onError={resetCaptcha}
+              size="flexible"
+              theme="auto"
+              appearance="always"
+              className="w-full"
+            />
+          </div>
           <Button
             isLoading={loading}
             radius="sm"
             color="primary"
-            size="lg"
             type="submit"
             className="w-full"
           >
             Create account
           </Button>
         </Form>
-        <div className="text-center text-sm">
-          Already have an account? <Link href="/auth/login">Login</Link>
-        </div>
       </div>
     </main>
   );
