@@ -22,7 +22,9 @@ export async function POST(req) {
 
   try {
     await connectDB();
-    const user = await User.findOne({ verifyToken: token });
+    const user = await User.findOne({ verifyToken: token }).select(
+      "+verifyToken",
+    );
 
     if (!user) {
       return NextResponse.json("Invalid verification token.", { status: 400 });

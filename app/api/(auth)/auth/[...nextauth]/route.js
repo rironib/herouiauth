@@ -1,6 +1,7 @@
 // app/api/auth/[...nextauth]/route.js
 
 import connectDB from "@/lib/db";
+import { checkRateLimit } from "@/lib/rateLimit";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import User from "@/models/User";
 import { compare } from "bcrypt";
@@ -20,6 +21,13 @@ const authOptions = {
       },
       async authorize(credentials) {
         await connectDB();
+
+        // Rate limiting: 5 attempts per email per minute
+        const identifier = credentials.email?.trim().toLowerCase() || "unknown";
+        const rateLimitCheck = checkRateLimit(identifier, 5, 60000);
+        if (!rateLimitCheck.success) {
+          throw new Error(rateLimitCheck.error);
+        }
 
         // ✅ Validate captcha
         const captcha = await verifyTurnstile(credentials.captchaToken);

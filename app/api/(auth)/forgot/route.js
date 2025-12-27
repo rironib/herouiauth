@@ -38,7 +38,9 @@ export async function POST(req) {
     const normalizedEmail = email.trim().toLowerCase();
 
     await connectDB();
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({ email: normalizedEmail }).select(
+      "+resetToken +resetLastSent",
+    );
 
     if (!user) {
       return NextResponse.json(

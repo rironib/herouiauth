@@ -36,7 +36,9 @@ export async function POST(req) {
     }
 
     await connectDB();
-    const user = await User.findOne({ resetToken: token });
+    const user = await User.findOne({ resetToken: token }).select(
+      "+resetToken +resetTokenExpiry",
+    );
     switch (true) {
       case !user:
         return NextResponse.json("The provided token is invalid.", {
